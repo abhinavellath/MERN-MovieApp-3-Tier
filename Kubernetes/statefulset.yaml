@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb                # has to match .spec.template.metadata.labels
+  serviceName: "mongodb"
+  replicas: 1  
+  minReadySeconds: 10  
+  template:
+    metadata:
+      labels:
+        app: mongodb              # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mongo
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+          name: mongodb
+        volumeMounts:
+        - name: movies-app-pvc
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: movies-app-pvc           # name of the persistent volume claim(PVC)
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "manual"
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  labels:
+    app: mongodb
+spec:
+  ports:
+  - port: 27017
+    name: mongodb
+  clusterIP: None
+  selector:
+    app: mongodb
