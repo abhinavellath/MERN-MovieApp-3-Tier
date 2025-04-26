@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: Ecom-frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - Ecom-movie
+    depends_on:
+      - mongo
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: Ecom-backend
+    ports:
+      - "3000:3000"
+    networks:
+      - Ecom-movie
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - Ecom-movie
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+
+networks:
+  Ecom-movie:
+    driver: bridge
