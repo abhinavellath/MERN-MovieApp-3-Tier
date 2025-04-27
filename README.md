@@ -18,7 +18,7 @@
   #
   - Run Backend container
   ```bash
-        docker run --network=<Network-Name> --name backend -d -p 5000:5000 sidraut007/movie-back
+        docker run --network=<Network-Name> --name backend -d -p 3000:3000 sidraut007/movie-back
   ```
 
   #
@@ -37,9 +37,9 @@
 
 ```bash
 
-docker cp ./dump/moviesApp <Container_Name>:/data/moviesApp
+docker cp ./dump/moviesApp <Mongo_Container_Name>:/data/moviesApp
 
-docker exec -it <Container_Name> bash
+docker exec -it <Mongo_Container_Name> bash
 
 mongorestore --db moviesApp /data/moviesApp
 
