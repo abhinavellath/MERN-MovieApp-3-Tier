@@ -1,13 +1,13 @@
 ﻿# MERN Stack Movies App 👇
 
-### [Steps To Run MERN Movie-App]
+## Steps To Run MERN Movie-App
 
 > [!Important]
 > Make sure to change docker build command with your DockerHub username.
   #
   - Create a docker network
   ```bash
-  docker network create <Network-Name>
+        docker network create <Network-Name>
   ```
   #
   - Run MONGO container
@@ -29,15 +29,11 @@
   #
   - Verify deployment
   ```bash
-  docker ps
-  ```
- #
-  - Using docker-compose deployment
-  ```bash
-  docker compose up -d
+      docker ps
   ```
 
-### [HOW TO IMPORT DATADABE]
+ #
+  - HOW TO IMPORT LOCAL DATADABE
 
 ```bash
 
@@ -48,6 +44,12 @@ docker exec -it <Container_Name> bash
 mongorestore --db moviesApp /data/moviesApp
 
 ```
+
+ #
+  - Using docker-compose deployment
+  ```bash
+      docker compose up -d
+  ```
 
 
 
