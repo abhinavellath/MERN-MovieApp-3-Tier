@@ -31,6 +31,10 @@ jobs:
 
     - name: List running containers
       run: docker ps -a
+
+    - name: Delete mongo container
+      run: docker rm -f mongo
+
   
     - name: Using docker-compose deployment
       run:  docker compose up -d
