@@ -49,6 +49,9 @@ jobs:
       # ---------------- SonarQube Analysis ----------------
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v2
+        with:
+          # Add the project key here. Use a unique name for your project.
+          projectKey: "movie-app"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
