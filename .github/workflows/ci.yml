@@ -115,8 +115,8 @@ jobs:
     steps:
        - name: Update Kubernetes Manifests
          run: |
-          sed -i "s|image: wizardjones777/frontend:.*|image: wizardjones777/frontend:${{ github.event.inputs.frontend_version }}|" Kubernetes/frontend-deployment.yaml
-          sed -i "s|image: wizardjones777/backend:.*|image: wizardjones777/backend:${{ github.event.inputs.backend_version }}|" Kubernetes/backend-deployment.yaml
+          sed -i "s|image: wizardjones777/frontend:.*|image: wizardjones777/frontend:${{ github.event.inputs.frontend_version }}|" /Kubernetes/frontend-deployment.yaml
+          sed -i "s|image: wizardjones777/backend:.*|image: wizardjones777/backend:${{ github.event.inputs.backend_version }}|" /Kubernetes/backend-deployment.yaml
 
        - name: Commit & Push Manifest Changes
          run: |
