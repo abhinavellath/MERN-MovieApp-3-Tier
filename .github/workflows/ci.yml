@@ -93,7 +93,7 @@ jobs:
       - name: Run Trivy Docker Image Scan
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: "mwizardjones777/movie-app:${{ github.event.inputs.frontend_version }}"
+          image-ref: "wizardjones777/movie-app:${{ github.event.inputs.frontend_version }}"
           format: 'table'
           exit-code: '0'
           severity: 'CRITICAL,HIGH'
