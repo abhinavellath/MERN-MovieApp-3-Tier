@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: movie-backend
-        image: wizardjones777/backend:1.0.11
+        image: wizardjones777/backend:1.0.15
         ports:
         - containerPort: 3000
 ---

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: movie-frontend
-        image: wizardjones777/frontend:1.0.11
+        image: wizardjones777/frontend:1.0.15
         ports:
         - containerPort: 5173
 ---
