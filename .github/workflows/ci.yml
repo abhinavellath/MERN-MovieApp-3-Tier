@@ -1,134 +1,133 @@
 name: CI Pipeline
 
 on:
-  workflow_dispatch:
-    inputs:
-      frontend_version:
-        description: "Version for frontend (e.g. 1.0.0)"
-        required: true
-        default: "1.0.0"
-      backend_version:
-        description: "Version for backend (e.g. 1.0.0)"
-        required: true
-        default: "1.0.0"
+  workflow_dispatch:
+    inputs:
+      frontend_version:
+        description: "Version for frontend (e.g. 1.0.0)"
+        required: true
+        default: "1.0.0"
+      backend_version:
+        description: "Version for backend (e.g. 1.0.0)"
+        required: true
+        default: "1.0.0"
 
 jobs:
-  ci:
-    runs-on: ubuntu-latest
+  ci:
+    runs-on: ubuntu-latest
 
-    steps:
-      # ... (All your existing CI steps like checkout, OWASP, Trivy, SonarQube, and Docker build/push) ...
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    steps:
+      # ---------------- Checkout Code ----------------
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      # ---------------- OWASP Dependency Check ----------------
-      - name: Run OWASP Dependency-Check
-        uses: dependency-check/Dependency-Check_Action@main
-        with:
-          project: "my-app"
-          path: "."
-          format: "HTML"
-          out: "reports"
-      - name: Upload OWASP Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency-check-report
-          path: reports
+      # ---------------- OWASP Dependency Check ----------------
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: "my-app"
+          path: "."
+          format: "HTML"
+          out: "reports"
+      - name: Upload OWASP Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: reports
 
-      # ---------------- Trivy Security Scan ----------------
-      - name: Run Trivy FS Scan
-        uses: aquasecurity/trivy-action@0.20.0
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'table'
-          exit-code: '0'
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+      # ---------------- Trivy Security Scan ----------------
+      - name: Run Trivy FS Scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          exit-code: '0'
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
 
-      # ---------------- SonarQube Analysis ----------------
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v2
-        with:
-          args: >
-            -Dsonar.projectKey=my-app
-            -Dsonar.projectName=My-App
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+     # ---------------- SonarQube Analysis ----------------
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        with:
+          # Pass sonar.projectKey as a command-line argument using the 'args' input
+          args: >
+            -Dsonar.projectKey=my-app
+            -Dsonar.projectName=My-App
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      - name: SonarQube Quality Gate
-        uses: sonarsource/sonarqube-quality-gate-action@v1
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: SonarQube Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      # ---------------- Docker Login ----------------
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          
-      # ---------------- Build & Push Frontend ----------------
-      - name: Build & Push Frontend
-        uses: docker/build-push-action@v4
-        with:
-          context: ./frontend
-          push: true
-          tags: |
-            wizardjones777/frontend:${{ github.event.inputs.frontend_version }}
+      # ---------------- Docker Login ----------------
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      # ---------------- Build & Push Frontend ----------------
+      - name: Build & Push Frontend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            wizardjones777/frontend:${{ github.event.inputs.frontend_version }}
 
-      # ---------------- Build & Push Backend ----------------
-      - name: Build & Push Backend
-        uses: docker/build-push-action@v4
-        with:
-          context: ./
-          push: true
-          tags: |
-            wizardjones777/backend:${{ github.event.inputs.backend_version }}
+      # ---------------- Build & Push Backend ----------------
+      - name: Build & Push Backend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./
+          push: true
+          tags: |
+            wizardjones777/backend:${{ github.event.inputs.backend_version }}
 
-      # ---------------- Trivy Image Scan ----------------
-      - name: Run Trivy Docker Image Scan (Frontend)
-        uses: aquasecurity/trivy-action@0.20.0
-        with:
-          image-ref: "wizardjones777/frontend:${{ github.event.inputs.frontend_version }}"
-          format: 'table'
-          exit-code: '0'
-          severity: 'CRITICAL,HIGH'
+      # ---------------- Trivy Image Scan ----------------
+      - name: Run Trivy Docker Image Scan (Frontend)
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: "wizardjones777/frontend:${{ github.event.inputs.frontend_version }}"
+          format: 'table'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
 
-      - name: Run Trivy Docker Image Scan (Backend)
-        uses: aquasecurity/trivy-action@0.20.0
-        with:
-          image-ref: "wizardjones777/backend:${{ github.event.inputs.backend_version }}"
-          format: 'table'
-          exit-code: '0'
-          severity: 'CRITICAL,HIGH'
+      - name: Run Trivy Docker Image Scan (Backend)
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: "wizardjones777/backend:${{ github.event.inputs.backend_version }}"
+          format: 'table'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+       
+       
 
----
+  cd:
+    needs: ci   # ensures CD runs only if CI succeeds
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+    
+      - name: Update Kubernetes Manifests
+        run: |
+          sed -i "s|image: wizardjones777/frontend:.*|image: wizardjones777/frontend:${{ github.event.inputs.frontend_version }}|" Kubernetes/frontend-deployment.yaml
+          sed -i "s|image: wizardjones777/backend:.*|image: wizardjones777/backend:${{ github.event.inputs.backend_version }}|" Kubernetes/backend-deployment.yaml
 
-  cd:
-    needs: ci
-    runs-on: ubuntu-latest
-    # Add these permissions to allow the job to write to the repository
-    permissions:
-      contents: write
+      - name: Commit & Push Manifest Changes
+        run: |
+          git config --global user.email "ci-bot@github.com"
+          git config --global user.name "CI Bot"
+          git add Kubernetes/
+          git commit -m "Update images to frontend:${{ github.event.inputs.frontend_version }} backend:${{ github.event.inputs.backend_version }}"
+          git push origin main  
 
-    steps:
-      # CRITICAL: Checkout the code in this job
-      - name: Checkout Code
-        uses: actions/checkout@v4
 
-      - name: Update Kubernetes Manifests
-        run: |
-          # The paths are now correct and will be found
-          sed -i "s|image: wizardjones777/frontend:.*|image: wizardjones777/frontend:${{ github.event.inputs.frontend_version }}|" Kubernetes/frontend-deployment.yaml
-          sed -i "s|image: wizardjones777/backend:.*|image: wizardjones777/backend:${{ github.event.inputs.backend_version }}|" Kubernetes/backend-deployment.yaml
 
-      - name: Commit & Push Manifest Changes
-        run: |
-          git config --global user.email "ci-bot@github.com"
-          git config --global user.name "CI Bot"
-          git add Kubernetes/
-          git commit -m "Update images to frontend:${{ github.event.inputs.frontend_version }} backend:${{ github.event.inputs.backend_version }}"
-          git push origin main
