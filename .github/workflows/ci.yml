@@ -1,0 +1,87 @@
+name: CI Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      frontend_version:
+        description: "Version for frontend (e.g. 1.0.0)"
+        required: true
+        default: "1.0.0"
+      backend_version:
+        description: "Version for backend (e.g. 1.0.0)"
+        required: true
+        default: "1.0.0"
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ---------------- Checkout Code ----------------
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # ---------------- OWASP Dependency Check ----------------
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: "my-app"
+          path: "."
+          format: "HTML"
+          out: "reports"
+      - name: Upload OWASP Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: dependency-check-report
+          path: reports
+
+      # ---------------- Trivy Security Scan ----------------
+      - name: Run Trivy FS Scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          exit-code: '1'
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      # ---------------- SonarQube Analysis ----------------
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: SonarQube Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      # ---------------- Build & Push Frontend ----------------
+      - name: Build & Push Frontend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            wizardjones777/frontend:${{ github.event.inputs.frontend_version }}
+
+      # ---------------- Build & Push Backend ----------------
+      - name: Build & Push Backend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./
+          push: true
+          tags: |
+            wizardjones777/backend:${{ github.event.inputs.backend_version }}
+
+      # ---------------- Trivy Image Scan ----------------
+      - name: Run Trivy Docker Image Scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: "mwizardjones777/movie-app:${{ github.event.inputs.frontend_version }}"
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
