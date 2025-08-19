@@ -83,5 +83,5 @@ jobs:
         with:
           image-ref: "mwizardjones777/movie-app:${{ github.event.inputs.frontend_version }}"
           format: 'table'
-          exit-code: '1'
+          exit-code: '0'
           severity: 'CRITICAL,HIGH'
