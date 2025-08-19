@@ -90,10 +90,18 @@ jobs:
             wizardjones777/backend:${{ github.event.inputs.backend_version }}
 
       # ---------------- Trivy Image Scan ----------------
-      - name: Run Trivy Docker Image Scan
+      - name: Run Trivy Docker Image Scan (Frontend)
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: "wizardjones777/movie-app:${{ github.event.inputs.frontend_version }}"
+          image-ref: "wizardjones777/movie-app-frontend:${{ github.event.inputs.frontend_version }}"
+          format: 'table'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Run Trivy Docker Image Scan (Backend)
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: "wizardjones777/movie-app-backend:${{ github.event.inputs.backend_version }}"
           format: 'table'
           exit-code: '0'
           severity: 'CRITICAL,HIGH'
