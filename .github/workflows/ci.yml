@@ -13,7 +13,7 @@ on:
         default: "1.0.0"
 
 jobs:
-  build-deploy:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -105,3 +105,26 @@ jobs:
           format: 'table'
           exit-code: '0'
           severity: 'CRITICAL,HIGH'
+       
+       
+
+  cd:
+    needs: ci   # ensures CD runs only if CI succeeds
+    runs-on: ubuntu-latest
+    
+    steps:
+       - name: Update Kubernetes Manifests
+         run: |
+          sed -i "s|image: wizardjones777/frontend:.*|image: wizardjones777/frontend:${{ github.event.inputs.frontend_version }}|" Kubernetes/frontend-deployment.yaml
+          sed -i "s|image: wizardjones777/backend:.*|image: wizardjones777/backend:${{ github.event.inputs.backend_version }}|" Kubernetes/backend-deployment.yaml
+
+       - name: Commit & Push Manifest Changes
+         run: |
+          git config --global user.email "ci-bot@github.com"
+          git config --global user.name "CI Bot"
+          git add Kubernetes/
+          git commit -m "Update images to frontend:${{ github.event.inputs.frontend_version }} backend:${{ github.event.inputs.backend_version }}"
+          git push origin main  
+
+
+
