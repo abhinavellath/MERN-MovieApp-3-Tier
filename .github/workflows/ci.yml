@@ -29,7 +29,12 @@ jobs:
     - name: Run Application container
       run: docker run --network=network1 --name frontend -d -p 5173:5173 sidraut007/movie-front
 
+    - name: List running containers
+      run: docker ps -a
+  
     - name: Using docker-compose deployment
       run:  docker compose up -d
+
+    
       
       
