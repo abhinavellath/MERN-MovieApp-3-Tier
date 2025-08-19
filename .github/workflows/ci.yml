@@ -127,7 +127,7 @@ jobs:
           git config --global user.name "CI Bot"
           git add Kubernetes/
           git commit -m "Update images to frontend:${{ github.event.inputs.frontend_version }} backend:${{ github.event.inputs.backend_version }}"
-          git push origin main  
+          git push origin master 
 
 
 
