@@ -46,12 +46,14 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
-      # ---------------- SonarQube Analysis ----------------
+     # ---------------- SonarQube Analysis ----------------
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v2
         with:
-          # Add the project key here. Use a unique name for your project.
-          projectKey: "movie-app"
+          # Pass sonar.projectKey as a command-line argument using the 'args' input
+          args: >
+            -Dsonar.projectKey=my-app
+            -Dsonar.projectName=My-App
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
