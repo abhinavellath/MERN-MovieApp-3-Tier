@@ -1,0 +1,35 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+    - name: Create docker Network
+      run: docker network create network1
+
+    - name : Run MONGO container
+      run:  docker run --network=network1 --name mongo -d -p 27017:27017 mongo
+
+    - name : Run Backend container
+      run: docker run --network=network1 --name backend -d -p 3000:3000 sidraut007/movie-back
+
+    - name: Run Application container
+      run: docker run --network=network1 --name frontend -d -p 5173:5173 sidraut007/movie-front
+
+    - name: Using docker-compose deployment
+      run:  docker compose up -d
+      
+      
