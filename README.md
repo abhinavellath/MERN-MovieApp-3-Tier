@@ -109,7 +109,7 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 ## Steps
 
- - Create a docker network
+- Create a docker network
   ```bash
         docker network create <Network-Name>
   ```
@@ -120,24 +120,24 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
   ```
 
 
- - Run Backend container
+- Run Backend container
   ```bash
         docker run --network=<Network-Name> --name backend -d -p 3000:3000 sidraut007/movie-back
   ```
 
   
- - Run Application container
+- Run Application container
   ```bash
         docker run --network=<Network-Name> --name frontend -d -p 5173:5173 sidraut007/movie-front
   ```
 
- - Verify deployment
+- Verify deployment
   ```bash
       docker ps
   ```
 
 
- - HOW TO IMPORT LOCAL DATADABE
+- HOW TO IMPORT LOCAL DATADABE
 
       ```bash
 
@@ -150,7 +150,7 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
       ```
 
  
- - Using docker-compose deployment
+- Using docker-compose deployment
       ```bash
             docker compose up -d
       ```
