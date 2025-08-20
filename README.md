@@ -109,15 +109,12 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 ## Steps
 
-> [!Important]
-> Make sure to change docker build command with your DockerHub username.
-  #
-  - Create a docker network
+ - Create a docker network
   ```bash
         docker network create <Network-Name>
   ```
-  #
-  - Run MONGO container
+
+- Run MONGO container
   ```bash
         docker run --network=<Network-Name> --name mongo -d -p 27017:27017 mongo
   ```
