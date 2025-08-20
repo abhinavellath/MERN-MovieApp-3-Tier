@@ -17,6 +17,7 @@ Key DevOps practices implemented:
 - AWS Cloud Infrastructure for hosting and scaling
 - ArgoCD for kubernetes based GitOps
 - SMTP service for email alerts
+- Application Stack (for context): MongoDB, Express.js, React.js, Node.js
 
 ## Architecture
 
@@ -109,35 +110,38 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 ## Steps
 
-- Create a docker network
+1. Creation of EC2 Master Instance in AWS Console with 2CPU, 8GB of RAM (t2.large) and 29 GB of storage.
+
+2. Create a docker network
   ```bash
-        docker network create <Network-Name>
+      sudo apt-get install docker.io -y
+      sudo usermod -aG docker ubuntu && newgrp docker
+      docker network create <Network-Name>
   ```
 
-- Run MONGO container
+3. Run MONGO container
   ```bash
         docker run --network=<Network-Name> --name mongo -d -p 27017:27017 mongo
   ```
 
 
-- Run Backend container
+4. Run Backend container
   ```bash
         docker run --network=<Network-Name> --name backend -d -p 3000:3000 sidraut007/movie-back
   ```
 
   
-- Run Application container
+5. Run Application container
   ```bash
         docker run --network=<Network-Name> --name frontend -d -p 5173:5173 sidraut007/movie-front
   ```
-
-- Verify deployment
+ Verify deployment
   ```bash
       docker ps
   ```
 
 
-- HOW TO IMPORT LOCAL DATADABE
+6. Importing local database
 
       ```bash
 
@@ -149,11 +153,126 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
       ```
 
- 
-- Using docker-compose deployment
+ Using docker-compose deployment
       ```bash
             docker compose up -d
       ```
+
+7. Configure the pipelines on GitHub Action directly from code repository in GitHub. Attach neccesary credentials to GitHub Actions.
+
+
+8. Create EKS Cluster on AWS (Master machine), add IAM user, obtain access keys, and configure AWS CLI.
+    ```bash
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    sudo apt install unzip
+    unzip awscliv2.zip
+    sudo ./aws/install
+    aws configure
+    ```
+9. Install Kubectl and Eksctl
+    ```bash
+        curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl
+    chmod +x ./kubectl
+    sudo mv ./kubectl /usr/local/bin
+    kubectl version --short --client
+
+    curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+    sudo mv /tmp/eksctl /usr/local/bin
+    eksctl version
+    ```
+10. Create EKS Cluster, provide OIDC and create Nodegroup.
+    ```bash
+    eksctl create cluster --name=movie-app \
+                    --region=us-east-1 \
+                    --version=1.30 \
+                    --without-nodegroup
+
+    eksctl utils associate-iam-oidc-provider \
+                    --region us-east-1 \
+                    --cluster movie-app \
+                    --approve
+
+    eksctl create nodegroup --cluster=movie-app \
+                     --region=us-east-1 \
+                     --name=movie-app \
+                     --node-type=t2.large \
+                     --nodes=2 \
+                     --nodes-min=2 \
+                     --nodes-max=2 \
+                     --node-volume-size=29 \
+                     --ssh-access \
+                     --ssh-public-key=eks-nodegroup-key
+
+11. Install and Configure SonarQube on Master Instance, add to instance security group and expose on port 9000.
+
+    ```bash 
+    docker run -itd --name SonarQube-Server -p 9000:9000 sonarqube:lts-community
+    ```
+
+12. Install Trivy.
+    ```bash
+        sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+    wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+    echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+    sudo apt-get update -y
+    sudo apt-get install trivy -y
+    ```
+
+13. Install and configure ArgoCD on the cluster.
+    ```bash
+    kubectl create namespace argocd
+    kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    watch kubectl get pods -n argocd
+    sudo curl --silent --location -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.4.7/argocd-linux-amd64sudo chmod +x /usr/local/bin/argocd
+    ```
+    Patch ArgoCD Server as a NodePort and access it on the browser.
+    ```bash
+    kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "NodePort"}}'
+    ```
+
+14. Allow port 465 on master instance for SMTPS notifications. Configure it in corresponding google account and Jenkins Master. Test the SMTP connection.
+
+15. Add credentials to DockerHub for the built images to be pushed.
+
+16. Build and automate pipelines on GitHub Actions. Complete CI/CD.
+
+17. Add the EKS Cluster to ArgoCD for application deployment.
+    ```bash 
+    argocd cluster add Chat-app@chat-app.us-east-1.eksctl.io --name chat-app-eks-cluster
+    ```
+    Open ArgoCD, add repositories and build the application.
+
+18.  Install Helm Chart and add helm repository for Prometheus and Grafana.
+    ```bash
+    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    chmod 700 get_helm.sh
+    ./get_helm.sh
+
+    helm repo add stable https://charts.helm.sh/stable
+
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    ```
+    ```bash
+    helm install stable prometheus-community/kube-prometheus-stack -n prometheus
+
+    kubectl get svc -n prometheus
+    ```
+
+    ```bash
+    Expose it as a NodePort and access on browser. 
+    Expose Grafana similiarly and access it on browser.
+
+19.  Gather metrics and monitor app data.
+
+20. Clean up and delete Cluster.
+    ```bash
+    eksctl delete cluster --name=movie-app --region=us-east-1
+    ```
+
+---
+
+
+
 
 
 
