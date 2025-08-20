@@ -119,42 +119,42 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
         docker run --network=<Network-Name> --name mongo -d -p 27017:27017 mongo
   ```
 
-  #
-  - Run Backend container
+
+ - Run Backend container
   ```bash
         docker run --network=<Network-Name> --name backend -d -p 3000:3000 sidraut007/movie-back
   ```
 
-  #
-  - Run Application container
+  
+ - Run Application container
   ```bash
         docker run --network=<Network-Name> --name frontend -d -p 5173:5173 sidraut007/movie-front
   ```
-  #
-  - Verify deployment
+
+ - Verify deployment
   ```bash
       docker ps
   ```
 
- #
-  - HOW TO IMPORT LOCAL DATADABE
 
-```bash
+ - HOW TO IMPORT LOCAL DATADABE
 
-docker cp ./dump/moviesApp <Mongo_Container_Name>:/data/moviesApp
+      ```bash
 
-docker exec -it <Mongo_Container_Name> bash
+      docker cp ./dump/moviesApp <Mongo_Container_Name>:/data/moviesApp
 
-mongorestore --db moviesApp /data/moviesApp
+      docker exec -it <Mongo_Container_Name> bash
 
-```
+      mongorestore --db moviesApp /data/moviesApp
 
- #
-  - Using docker-compose deployment
-  ```bash
-      docker compose up -d
-  ```
+      ```
+
+ 
+ - Using docker-compose deployment
+      ```bash
+            docker compose up -d
+      ```
 
 
 
-![Course Thumbnail](/thumb.png)
+     
