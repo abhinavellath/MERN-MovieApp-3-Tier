@@ -23,7 +23,7 @@ Key DevOps practices implemented:
 
 ```mermaid
 flowchart TD
-    A[Code Commit to GitHub] --> B[Jenkins Pipeline Triggered]
+    A[Code Commit to GitHub] --> B[GitHub Actions Pipeline Triggered]
     B --> C[Build Docker Images ]
     C --> D[Security Scan with OWASP Trivy]
     C --> E[Code Analysis with SonarQube]
@@ -279,5 +279,6 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 
      
+
 
 
