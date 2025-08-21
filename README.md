@@ -17,10 +17,11 @@ Key DevOps practices implemented:
 - AWS Cloud Infrastructure for hosting and scaling
 - ArgoCD for kubernetes based GitOps
 - SMTP service for email alerts
-- Application Stack (for context): MongoDB, Express.js, React.js, Node.js
+- Application Stack: MongoDB, Express.js, React.js, Node.js
 
 ## Architecture
 
+```mermaid
 flowchart TD
     A[Code Commit to GitHub] --> B[Jenkins Pipeline Triggered]
     B --> C[Build Docker Images (Frontend & Backend)]
@@ -33,6 +34,7 @@ flowchart TD
     H --> I[Prometheus Collects Metrics]
     I --> J[Grafana Visualizes Dashboards]
     I --> K[Alerts Trigger via SMTP]
+```
 
 ## Tech Stack
 
@@ -277,3 +279,4 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 
      
+
