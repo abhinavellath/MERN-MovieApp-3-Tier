@@ -118,9 +118,8 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
    ```bash
        sudo apt-get install docker.io -y
     sudo usermod -aG docker ubuntu && newgrp docker
-```
+    ```
    
-
 7. Configure the pipelines on GitHub Action directly from code repository in GitHub. Attach neccesary credentials to GitHub Actions.
 
 
@@ -240,6 +239,7 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 
      
+
 
 
 
