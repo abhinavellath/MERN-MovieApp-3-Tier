@@ -64,7 +64,7 @@ flowchart TD
 
 1. **AWS Configuration**
 
-An AWS Instance was created with all nessecary configurations and limitations to serve as the master machiene for the project.
+An AWS Instance was created with all nessecary configurations and limitations to serve as the master machine for the project.
 
 2. **Containerisation with docker**
 
@@ -233,6 +233,7 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 
      
+
 
 
 
