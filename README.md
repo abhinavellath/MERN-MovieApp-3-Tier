@@ -114,6 +114,13 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 1. Creation of EC2 Master Instance in AWS Console with 2CPU, 8GB of RAM (t2.large) and 29 GB of storage.
 
+2. Installation and configuration of Docker.
+   ```bash
+       sudo apt-get install docker.io -y
+    sudo usermod -aG docker ubuntu && newgrp docker
+```
+   
+
 7. Configure the pipelines on GitHub Action directly from code repository in GitHub. Attach neccesary credentials to GitHub Actions.
 
 
@@ -233,6 +240,7 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 
      
+
 
 
 
