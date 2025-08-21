@@ -114,52 +114,6 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 1. Creation of EC2 Master Instance in AWS Console with 2CPU, 8GB of RAM (t2.large) and 29 GB of storage.
 
-2. Create a docker network
-  ```bash
-      sudo apt-get install docker.io -y
-      sudo usermod -aG docker ubuntu && newgrp docker
-      docker network create <Network-Name>
-  ```
-
-3. Run MONGO container
-  ```bash
-        docker run --network=<Network-Name> --name mongo -d -p 27017:27017 mongo
-  ```
-
-
-4. Run Backend container
-  ```bash
-        docker run --network=<Network-Name> --name backend -d -p 3000:3000 sidraut007/movie-back
-  ```
-
-  
-5. Run Application container
-  ```bash
-        docker run --network=<Network-Name> --name frontend -d -p 5173:5173 sidraut007/movie-front
-  ```
- Verify deployment
-  ```bash
-      docker ps
-  ```
-
-
-6. Importing local database
-
-      ```bash
-
-      docker cp ./dump/moviesApp <Mongo_Container_Name>:/data/moviesApp
-
-      docker exec -it <Mongo_Container_Name> bash
-
-      mongorestore --db moviesApp /data/moviesApp
-
-      ```
-
- Using docker-compose deployment
-      ```bash
-            docker compose up -d
-      ```
-
 7. Configure the pipelines on GitHub Action directly from code repository in GitHub. Attach neccesary credentials to GitHub Actions.
 
 
@@ -279,6 +233,7 @@ Prometheus and Grafana were deployed on the EKS cluster to provide comprehensive
 
 
      
+
 
 
 
