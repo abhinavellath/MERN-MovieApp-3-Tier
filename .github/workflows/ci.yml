@@ -78,7 +78,7 @@ jobs:
           context: ./frontend
           push: true
           tags: |
-            wizardjones777/frontend:${{ github.event.inputs.frontend_version }}
+            abhinavellath/frontend:${{ github.event.inputs.frontend_version }}
 
       # ---------------- Build & Push Backend ----------------
       - name: Build & Push Backend
@@ -87,13 +87,13 @@ jobs:
           context: ./
           push: true
           tags: |
-            wizardjones777/backend:${{ github.event.inputs.backend_version }}
+            abhinavellath/backend:${{ github.event.inputs.backend_version }}
 
       # ---------------- Trivy Image Scan ----------------
       - name: Run Trivy Docker Image Scan (Frontend)
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: "wizardjones777/frontend:${{ github.event.inputs.frontend_version }}"
+          image-ref: "abhinavellath/frontend:${{ github.event.inputs.frontend_version }}"
           format: 'table'
           exit-code: '0'
           severity: 'CRITICAL,HIGH'
@@ -101,7 +101,7 @@ jobs:
       - name: Run Trivy Docker Image Scan (Backend)
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: "wizardjones777/backend:${{ github.event.inputs.backend_version }}"
+          image-ref: "abhinavellath/backend:${{ github.event.inputs.backend_version }}"
           format: 'table'
           exit-code: '0'
           severity: 'CRITICAL,HIGH'
@@ -118,8 +118,8 @@ jobs:
     
       - name: Update Kubernetes Manifests
         run: |
-          sed -i "s|image: wizardjones777/frontend:.*|image: wizardjones777/frontend:${{ github.event.inputs.frontend_version }}|" Kubernetes/frontend-deployment.yaml
-          sed -i "s|image: wizardjones777/backend:.*|image: wizardjones777/backend:${{ github.event.inputs.backend_version }}|" Kubernetes/backend-deployment.yaml
+          sed -i "s|image: abhinavellath/frontend:.*|image: abhinavellath/frontend:${{ github.event.inputs.frontend_version }}|" Kubernetes/frontend-deployment.yaml
+          sed -i "s|image: abhinavellath/backend:.*|image: abhinavellath/backend:${{ github.event.inputs.backend_version }}|" Kubernetes/backend-deployment.yaml
 
       - name: Commit & Push Manifest Changes
         run: |
