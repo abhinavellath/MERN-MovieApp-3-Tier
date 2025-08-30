@@ -14,7 +14,7 @@ on:
 
 jobs:
   ci:
-    runs-on: label
+    runs-on: ubuntu-latest
 
     steps:
       # ---------------- Checkout Code ----------------
@@ -110,7 +110,7 @@ jobs:
 
   cd:
     needs: ci   # ensures CD runs only if CI succeeds
-    runs-on: label
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout Code
